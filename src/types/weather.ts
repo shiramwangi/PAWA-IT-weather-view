@@ -10,3 +10,5 @@ export interface WeatherData {
 export interface WeatherError {
   message: string;
 }
+
+export type TemperatureUnit = "celsius" | "fahrenheit";

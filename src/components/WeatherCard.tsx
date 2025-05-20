@@ -1,14 +1,19 @@
 
 import React from "react";
-import { WeatherData } from "../types/weather";
+import { WeatherData, TemperatureUnit } from "../types/weather";
 import { Cloud, CloudRain, Sun, Thermometer } from "lucide-react";
+import { convertTemperature } from "../services/weatherService";
 
 interface WeatherCardProps {
   weatherData: WeatherData;
+  unit: TemperatureUnit;
 }
 
-const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData }) => {
+const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData, unit }) => {
   const { city, temperature, description, humidity, icon } = weatherData;
+
+  // Convert temperature if needed
+  const displayTemp = convertTemperature(temperature, unit);
 
   // Capitalize the first letter of each word in description
   const formattedDescription = description
@@ -25,6 +30,9 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData }) => {
       return <CloudRain className="h-12 w-12 text-blue-500" />;
     return <Cloud className="h-12 w-12 text-gray-500" />;
   };
+
+  // Get the correct temperature unit symbol
+  const tempUnitSymbol = unit === "celsius" ? "°C" : "°F";
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:shadow-xl max-w-md w-full">
@@ -48,7 +56,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData }) => {
             <Thermometer className="h-6 w-6 text-red-500 mr-2" />
             <span className="text-gray-700">Temperature</span>
           </div>
-          <span className="text-2xl font-bold">{temperature}°C</span>
+          <span className="text-2xl font-bold">{displayTemp}{tempUnitSymbol}</span>
         </div>
         
         <div className="flex items-center justify-between">

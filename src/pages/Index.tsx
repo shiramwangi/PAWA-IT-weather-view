@@ -4,13 +4,15 @@ import SearchBar from "../components/SearchBar";
 import WeatherCard from "../components/WeatherCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
-import { WeatherData } from "../types/weather";
+import TemperatureToggle from "../components/TemperatureToggle";
+import { WeatherData, TemperatureUnit } from "../types/weather";
 import { getWeatherByCity } from "../services/weatherService";
 
 const Index: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [unit, setUnit] = useState<TemperatureUnit>("celsius");
 
   const handleSearch = async (city: string) => {
     setLoading(true);
@@ -28,6 +30,10 @@ const Index: React.FC = () => {
     }
   };
 
+  const handleUnitToggle = (newUnit: TemperatureUnit) => {
+    setUnit(newUnit);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white">
       <div className="container mx-auto px-4 py-12">
@@ -38,13 +44,17 @@ const Index: React.FC = () => {
 
         <SearchBar onSearch={handleSearch} />
 
+        {weatherData && (
+          <TemperatureToggle unit={unit} onToggle={handleUnitToggle} />
+        )}
+
         <div className="mt-10 flex justify-center">
           {loading ? (
             <LoadingSpinner />
           ) : error ? (
             <ErrorMessage message={error} />
           ) : weatherData ? (
-            <WeatherCard weatherData={weatherData} />
+            <WeatherCard weatherData={weatherData} unit={unit} />
           ) : (
             <div className="text-center text-gray-500 mt-8">
               <svg

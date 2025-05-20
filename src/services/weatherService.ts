@@ -1,5 +1,5 @@
 
-import { WeatherData } from "../types/weather";
+import { WeatherData, TemperatureUnit } from "../types/weather";
 
 const API_KEY = "4d8fb5b93d4af21d66a2948710284366"; // OpenWeatherMap free API key
 
@@ -29,4 +29,13 @@ export async function getWeatherByCity(city: string): Promise<WeatherData> {
     }
     throw new Error("Failed to fetch weather data");
   }
+}
+
+export function convertTemperature(temp: number, to: TemperatureUnit): number {
+  if (to === "fahrenheit") {
+    // Convert Celsius to Fahrenheit: (C × 9/5) + 32
+    return Math.round((temp * 9/5 + 32) * 10) / 10;
+  }
+  // Already in Celsius
+  return temp;
 }
