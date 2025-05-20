@@ -5,6 +5,16 @@ export interface WeatherData {
   description: string;
   humidity: number;
   icon: string;
+  date: string;
+  windSpeed: number;
+  windDeg: number;
+}
+
+export interface ForecastData {
+  date: string;
+  temperature: number;
+  description: string;
+  icon: string;
 }
 
 export interface WeatherError {

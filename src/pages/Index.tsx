@@ -5,11 +5,15 @@ import WeatherCard from "../components/WeatherCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import TemperatureToggle from "../components/TemperatureToggle";
-import { WeatherData, TemperatureUnit } from "../types/weather";
+import LocationDate from "../components/LocationDate";
+import WindStatus from "../components/WindStatus";
+import ForecastList from "../components/ForecastList";
+import { WeatherData, TemperatureUnit, ForecastData } from "../types/weather";
 import { getWeatherByCity } from "../services/weatherService";
 
 const Index: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [unit, setUnit] = useState<TemperatureUnit>("celsius");
@@ -20,11 +24,13 @@ const Index: React.FC = () => {
     
     try {
       const data = await getWeatherByCity(city);
-      setWeatherData(data);
+      setWeatherData(data.current);
+      setForecastData(data.forecast);
     } catch (err) {
       console.error("Error fetching weather data:", err);
       setError(err instanceof Error ? err.message : "Failed to fetch weather data");
       setWeatherData(null);
+      setForecastData([]);
     } finally {
       setLoading(false);
     }
@@ -48,13 +54,28 @@ const Index: React.FC = () => {
           <TemperatureToggle unit={unit} onToggle={handleUnitToggle} />
         )}
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10">
           {loading ? (
-            <LoadingSpinner />
+            <div className="flex justify-center">
+              <LoadingSpinner />
+            </div>
           ) : error ? (
-            <ErrorMessage message={error} />
+            <div className="flex justify-center">
+              <ErrorMessage message={error} />
+            </div>
           ) : weatherData ? (
-            <WeatherCard weatherData={weatherData} unit={unit} />
+            <div className="max-w-4xl mx-auto">
+              <LocationDate city={weatherData.city} date={weatherData.date} />
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                <WeatherCard weatherData={weatherData} unit={unit} />
+                <WindStatus speed={weatherData.windSpeed} degrees={weatherData.windDeg} />
+              </div>
+              
+              {forecastData.length > 0 && (
+                <ForecastList forecastData={forecastData} unit={unit} />
+              )}
+            </div>
           ) : (
             <div className="text-center text-gray-500 mt-8">
               <svg

@@ -1,8 +1,9 @@
 
 import React from "react";
 import { WeatherData, TemperatureUnit } from "../types/weather";
-import { Cloud, CloudRain, Sun, Thermometer } from "lucide-react";
+import { Thermometer } from "lucide-react";
 import { convertTemperature } from "../services/weatherService";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface WeatherCardProps {
   weatherData: WeatherData;
@@ -10,7 +11,7 @@ interface WeatherCardProps {
 }
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData, unit }) => {
-  const { city, temperature, description, humidity, icon } = weatherData;
+  const { temperature, description, humidity, icon } = weatherData;
 
   // Convert temperature if needed
   const displayTemp = convertTemperature(temperature, unit);
@@ -21,24 +22,14 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData, unit }) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  // Function to get weather icon based on condition
-  const getWeatherIcon = () => {
-    if (icon.includes("01")) return <Sun className="h-12 w-12 text-yellow-500" />;
-    if (icon.includes("02") || icon.includes("03") || icon.includes("04")) 
-      return <Cloud className="h-12 w-12 text-gray-500" />;
-    if (icon.includes("09") || icon.includes("10")) 
-      return <CloudRain className="h-12 w-12 text-blue-500" />;
-    return <Cloud className="h-12 w-12 text-gray-500" />;
-  };
-
   // Get the correct temperature unit symbol
   const tempUnitSymbol = unit === "celsius" ? "°C" : "°F";
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all hover:shadow-xl max-w-md w-full">
-      <div className="bg-gradient-to-r from-blue-500 to-blue-400 p-6 text-white">
+    <Card className="overflow-hidden shadow-lg max-w-md w-full">
+      <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-400 p-6 text-white">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold">{city}</h2>
+          <h2 className="text-3xl font-bold">Today's Weather</h2>
           <div className="bg-white bg-opacity-30 rounded-full p-2">
             <img 
               src={`https://openweathermap.org/img/wn/${icon}@2x.png`} 
@@ -48,9 +39,9 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData, unit }) => {
           </div>
         </div>
         <p className="text-lg opacity-90">{formattedDescription}</p>
-      </div>
+      </CardHeader>
       
-      <div className="p-6">
+      <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
             <Thermometer className="h-6 w-6 text-red-500 mr-2" />
@@ -75,8 +66,8 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weatherData, unit }) => {
           </div>
           <span className="text-xl font-semibold">{humidity}%</span>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
